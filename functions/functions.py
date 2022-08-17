@@ -12,11 +12,8 @@ def _extract_params(params, x):
 
 def gaussian(params, x: np.ndarray):
     """
-    builds the normalized chi3 complex vector
-    inputs:
-        params: (n_lor, 3)
-    outputs
-        chi3: complex, (n_points, )
+    Builds Gaussian function.
+    f = A * exp(-(x-x0)^2/(2*sigma^2))
     """
 
     A, sigma, x, x0 = _extract_params(params, x)
@@ -26,11 +23,8 @@ def gaussian(params, x: np.ndarray):
 
 def laplacian(params, x: np.ndarray):
     """
-    builds the normalized chi3 complex vector
-    inputs:
-        params: (n_lor, 3)
-    outputs
-        chi3: complex, (n_points, )
+    Builds laplacian function:
+    f = A * exp(-|x-x0|/sigma)
     """
 
     A, sigma, x, x0 = _extract_params(params, x)
