@@ -18,7 +18,7 @@ def gaussian(params, x: np.ndarray):
 
     A, sigma, x, x0 = _extract_params(params, x)
     result = np.sum(A * np.exp(-((x - x0) ** 2) / (2 * sigma ** 2)), axis=1)
-    return result / np.max(result)
+    return result
 
 
 def laplacian(params, x: np.ndarray):
@@ -29,4 +29,4 @@ def laplacian(params, x: np.ndarray):
 
     A, sigma, x, x0 = _extract_params(params, x)
     result = np.sum(A * np.exp(-abs(x - x0) / sigma), axis=1)
-    return result / np.max(result)
+    return result
