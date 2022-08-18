@@ -1,7 +1,8 @@
 from scipy.interpolate import interp1d
-from .params import generate_random_params
+from .param_generator import generate_random_params
 from . import functions
 import numpy as np
+from numpy import ndarray
 
 
 class SpectralData:
@@ -12,7 +13,7 @@ class SpectralData:
     noise = None
 
 
-def generate_spectrum(kind="gaussian", n_points=256, max_features=5, min_features=0):
+def generate_spectrum(kind="gaussian", n_points=256, max_features=5, min_features=0, params=None, noise_amp=None):
     """
     :param kind: "gaussian" or "laplacian"
     :type kind: str
@@ -22,10 +23,15 @@ def generate_spectrum(kind="gaussian", n_points=256, max_features=5, min_feature
     :type max_features: int
     :param min_features: minimum number of spectral features
     :type min_features: int
+    :param params:
+    :type params: ndarray
+    :param noise_amp: noise amplitude (ideal 0 to 0.1)
+    :type noise_amp: float
     :return: signal + noise, clean signal, params, SNR
     :rtype: SpectralData
     """
-    params = generate_random_params(max_features, min_features)
+    if params is None:
+        params = generate_random_params(max_features, min_features)
 
     x = np.linspace(0, 1, np.random.randint(64, 256))
     if kind == "laplacian":
@@ -33,7 +39,11 @@ def generate_spectrum(kind="gaussian", n_points=256, max_features=5, min_feature
     else:
         f = functions.gaussian
     _spec = f(params, x[:, np.newaxis])
-    noise = np.random.randn(len(x)) * np.random.uniform(0.0, 0.1)
+
+    if noise_amp is None:
+        noise_amp = np.random.uniform(0.0, 0.1)
+
+    noise = np.random.randn(len(x)) * noise_amp
 
     f_spec = interp1d(x, _spec)
     f_noise = interp1d(x, noise)
@@ -42,7 +52,6 @@ def generate_spectrum(kind="gaussian", n_points=256, max_features=5, min_feature
     noise = f_noise(new_x)
 
     signal = spec + noise
-    signal = (signal - np.min(signal)) / (np.max(signal) - np.min(signal))
     SNR = np.max(spec) / np.max(noise)
     result = SpectralData()
     result.simulated = signal
